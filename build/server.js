@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -78,18 +78,48 @@ module.exports = require("prop-types");
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/object/get-prototype-of");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/classCallCheck");
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/createClass");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/inherits");
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(3);
+__webpack_require__(8);
 
-var _path = __webpack_require__(4);
+var _path = __webpack_require__(9);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _express = __webpack_require__(5);
+var _express = __webpack_require__(10);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -97,11 +127,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(6);
+var _server = __webpack_require__(11);
 
 var _server2 = _interopRequireDefault(_server);
 
-var _Router = __webpack_require__(7);
+var _Router = __webpack_require__(12);
 
 var _Router2 = _interopRequireDefault(_Router);
 
@@ -116,13 +146,25 @@ var port = process.env.PORT || 3000;
 
 server.use(_express2.default.static(_path2.default.join(__dirname, "public")));
 
+//authentication mock
+server.use(function (req, res, next) {
+  if (typeof req.query.admin !== "undefined") {
+    req.user = { name: "Tarkus " };
+  } else {
+    req.user = null;
+  }
+  next();
+});
+
 server.get("*", function (req, res) {
+  var state = { user: req.user };
   var component = _Router2.default.match(req);
   var body = _server2.default.renderToString(component);
   var html = _server2.default.renderToStaticMarkup(_react2.default.createElement(_Html2.default, {
     title: "My App",
     description: "Isomorphic web application sample",
-    body: body
+    body: body,
+    state: state
   }));
   res.send("<!doctype html>\n" + html);
 });
@@ -132,31 +174,31 @@ server.listen(port, function () {
 });
 
 /***/ }),
-/* 3 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-core/register");
 
 /***/ }),
-/* 4 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 5 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
 
 /***/ }),
-/* 6 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 7 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -165,35 +207,53 @@ module.exports = require("react-dom/server");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Context = __webpack_require__(13);
+
+var _Context2 = _interopRequireDefault(_Context);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 //경로를 이곳에 등록
-var routes = [__webpack_require__(8).default, __webpack_require__(23).default, __webpack_require__(24).default];
+var routes = [__webpack_require__(14).default, __webpack_require__(23).default, __webpack_require__(24).default];
 
 var router = {
-  match: function match(location) {
+  match: function match(location, state) {
+    var component = void 0;
     var route = routes.find(function (x) {
       return x.path === location.path;
     });
 
     if (route) {
       try {
-        return route.action();
+        component = route.action(location);
       } catch (err) {
-        return routes.find(function (x) {
+        component = routes.find(function (x) {
           return x.path === "/500";
         }).action();
       }
     } else {
-      return routes.find(function (x) {
+      component = routes.find(function (x) {
         return x.path === "/404";
       }).action();
     }
+
+    return _react2.default.createElement(
+      _Context2.default,
+      state,
+      component
+    );
   }
 };
 
 exports.default = router;
 
 /***/ }),
-/* 8 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -203,23 +263,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(9);
+var _getPrototypeOf = __webpack_require__(2);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(10);
+var _classCallCheck2 = __webpack_require__(3);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(11);
+var _createClass2 = __webpack_require__(4);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(12);
+var _possibleConstructorReturn2 = __webpack_require__(5);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(13);
+var _inherits2 = __webpack_require__(6);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
@@ -227,7 +287,79 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Layout = __webpack_require__(14);
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Context = function (_Component) {
+  (0, _inherits3.default)(Context, _Component);
+
+  function Context() {
+    (0, _classCallCheck3.default)(this, Context);
+    return (0, _possibleConstructorReturn3.default)(this, (Context.__proto__ || (0, _getPrototypeOf2.default)(Context)).apply(this, arguments));
+  }
+
+  (0, _createClass3.default)(Context, [{
+    key: "getChildContext",
+    value: function getChildContext() {
+      return {
+        user: this.props.user
+      };
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.Children.only(this.props.children);
+    }
+  }]);
+  return Context;
+}(_react.Component);
+
+Context.childContextTypes = {
+  user: _propTypes2.default.shape({
+    name: _propTypes2.default.string.isRequired
+  })
+};
+exports.default = Context;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _getPrototypeOf = __webpack_require__(2);
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(3);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(4);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(5);
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(6);
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Layout = __webpack_require__(15);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
@@ -303,37 +435,7 @@ var Home = function (_Component) {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/core-js/object/get-prototype-of");
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/classCallCheck");
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/createClass");
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/inherits");
-
-/***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -347,7 +449,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Header = __webpack_require__(15);
+var _Header = __webpack_require__(16);
 
 var _Header2 = _interopRequireDefault(_Header);
 
@@ -355,7 +457,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Layout = __webpack_require__(16);
+var _Layout = __webpack_require__(17);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
@@ -398,7 +500,7 @@ Layout.propTypes = {
 exports.default = Layout;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -459,13 +561,13 @@ Header.propTypes = {
 exports.default = Header;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-collector: Loads CSS like style-loader, but pass the content to the style collector instead of inserting in the DOM
 
 // load the styles
-var content = __webpack_require__(17);
+var content = __webpack_require__(18);
 if (typeof content === 'string') content = [[module.i, content, '']];
 // collect the styles
 __webpack_require__(20).add(content, {});
@@ -473,10 +575,10 @@ if (content.locals) module.exports = content.locals;
 delete __webpack_require__.c[module.i];
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(undefined);
+exports = module.exports = __webpack_require__(19)(undefined);
 // imports
 
 
@@ -489,7 +591,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 /*
@@ -571,7 +673,6 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 19 */,
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -840,13 +941,26 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _stringify = __webpack_require__(26);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Html = function Html(props) {
+function Html(_ref) {
+  var title = _ref.title,
+      description = _ref.description,
+      body = _ref.body,
+      state = _ref.state;
+
   return _react2.default.createElement(
     "html",
     null,
@@ -858,21 +972,39 @@ var Html = function Html(props) {
       _react2.default.createElement(
         "title",
         null,
-        props.title || ""
+        title
       ),
-      _react2.default.createElement("meta", { name: "description", content: props.description || "" }),
+      _react2.default.createElement("meta", { name: "description", content: description }),
       _react2.default.createElement("meta", { name: "viewport", content: "width=device-width, initial-scale=1" }),
-      _react2.default.createElement("script", { src: "client.js" })
+      _react2.default.createElement("script", { async: true, src: "client.js" })
     ),
     _react2.default.createElement(
       "body",
       null,
-      _react2.default.createElement("div", { id: "app", dangerouslySetInnerHTML: { __html: props.children } })
+      _react2.default.createElement("div", { id: "app", dangerouslySetInnerHTML: { __html: body } }),
+      _react2.default.createElement("script", {
+        dangerouslySetInnerHTML: {
+          __html: "window.AppState=" + (0, _stringify2.default)(state)
+        }
+      })
     )
   );
+}
+
+Html.propType = {
+  title: _propTypes2.default.string.isRequired,
+  description: _propTypes2.default.string.isRequired,
+  body: _propTypes2.default.string.isRequired,
+  state: _propTypes2.default.object.isRequired
 };
 
 exports.default = Html;
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/json/stringify");
 
 /***/ })
 /******/ ]);

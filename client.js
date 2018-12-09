@@ -4,9 +4,8 @@ import ReactDOM from "react-dom";
 import Router from "./core/Router";
 
 function run() {
-  const component = Router.match({
-    path: window.location.pathname
-  });
+  const location = { path: window.location.pathname };
+  const component = Router.match(location, window.AppState);
   ReactDOM.hydrate(component, document.getElementById("app"));
 }
 
