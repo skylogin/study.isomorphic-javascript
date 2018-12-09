@@ -1,0 +1,7 @@
+@import "../variables.scss";
+
+.root {
+  box-shadow: $shadow-2dp;
+  transition-timing-function: $animation-curve-default;
+  transition-duration: $animation-duration-default;
+}

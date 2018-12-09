@@ -105,7 +105,7 @@ var _Router = __webpack_require__(7);
 
 var _Router2 = _interopRequireDefault(_Router);
 
-var _Html = __webpack_require__(19);
+var _Html = __webpack_require__(25);
 
 var _Html2 = _interopRequireDefault(_Html);
 
@@ -166,7 +166,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 //경로를 이곳에 등록
-var routes = [__webpack_require__(8).default, __webpack_require__(17).default, __webpack_require__(18).default];
+var routes = [__webpack_require__(8).default, __webpack_require__(23).default, __webpack_require__(24).default];
 
 var router = {
   match: function match(location) {
@@ -231,7 +231,7 @@ var _Layout = __webpack_require__(14);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _Hero = __webpack_require__(16);
+var _Hero = __webpack_require__(22);
 
 var _Hero2 = _interopRequireDefault(_Hero);
 
@@ -355,6 +355,10 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _Layout = __webpack_require__(16);
+
+var _Layout2 = _interopRequireDefault(_Layout);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Layout(_ref) {
@@ -363,7 +367,7 @@ function Layout(_ref) {
 
   return _react2.default.createElement(
     "div",
-    null,
+    { className: _Layout2.default.root },
     _react2.default.createElement(
       _Header2.default,
       null,
@@ -458,6 +462,249 @@ exports.default = Header;
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// style-collector: Loads CSS like style-loader, but pass the content to the style collector instead of inserting in the DOM
+
+// load the styles
+var content = __webpack_require__(17);
+if (typeof content === 'string') content = [[module.i, content, '']];
+// collect the styles
+__webpack_require__(20).add(content, {});
+if (content.locals) module.exports = content.locals;
+delete __webpack_require__.c[module.i];
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(18)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "/* //// Shadows ///////////////////////////////////////////////////////////// */\n/* //// Animations ////////////////////////////////////////////////////////// */\n.Layout_root_110 {\n  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),0 3px 1px -2px rgba(0, 0, 0, 0.2),0 1px 5px 0 rgba(0, 0, 0, 0.12);\n          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),0 3px 1px -2px rgba(0, 0, 0, 0.2),0 1px 5px 0 rgba(0, 0, 0, 0.12);\n  -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  -webkit-transition-duration: 0.2s;\n          transition-duration: 0.2s;\n}\n", ""]);
+
+// exports
+exports.locals = {
+	"root": "Layout_root_110"
+};
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 19 */,
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var styleStack = __webpack_require__(21);
+// it's necessary setting initialStyleStack as it may not be required as the same module between webpack and the user
+// due to path differences in certain scenarios
+global.initialStyleStack = (global.initialStyleStack !== undefined) ? global.initialStyleStack : new styleStack();
+
+// initial style collection
+exports.add = add.bind(null, initialStyleStack);
+
+exports.collectInitial = function collectInitial() {
+  var styleTag = initialStyleStack.getStyleTag();
+  exports.add = inactiveAdd;
+  // commented-out so it doesn't have to be stored by the user and to test hot-reload
+  //initialStyleStack = undefined;
+  return styleTag;
+}
+
+exports.collectContext = function collectContext(fn) {
+
+  var contextStyleStack = new styleStack();
+
+  // include path differences may make this fail, TODO: test
+  exports.add = add.bind(null, contextStyleStack);
+  var result = fn();
+  exports.add = inactiveAdd;
+
+  return [
+    contextStyleStack.getStyleTag(),
+    result
+  ]
+}
+
+function add(stack, list, options) {
+  var styles = styleStack.listToStyles(list);
+  stack.addStylesToStack(styles, options);
+}
+
+function inactiveAdd() {}
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+var styleStack = module.exports = function styleStack() {
+  this.stylesInStack = {}; // this is stylesInDom in style-loader
+  this.stackStyleElement = { // this is roughly equivalent to singletonElement in style-loader
+    cssText: ""
+  };
+  this.singletonCounter = 0;
+}
+
+styleStack.prototype.addStylesToStack = function addStylesToStack(styles, options) {
+  for(var i = 0; i < styles.length; i++) {
+    var item = styles[i];
+    var stackStyle = this.stylesInStack[item.id];
+    if(stackStyle) {
+      stackStyle.refs++;
+      for(var j = 0; j < stackStyle.parts.length; j++) {
+        stackStyle.parts[j](item.parts[j]); // calls updateStyle function
+      }
+      for(; j < item.parts.length; j++) {
+        stackStyle.parts.push(this.addStyle(item.parts[j], options));
+      }
+    } else {
+      var parts = [];
+      for(var j = 0; j < item.parts.length; j++) {
+        parts.push(this.addStyle(item.parts[j], options));
+      }
+      this.stylesInStack[item.id] = {id: item.id, refs: 1, parts: parts};
+    }
+  }
+}
+
+styleStack.prototype.addStyle = function addStyle(obj) {
+  var styleIndex = this.singletonCounter++;
+  var update = applyToSingletonTag.bind(null, this.stackStyleElement, styleIndex);
+
+  update(obj); // call update once for first insertion
+
+  return function updateStyle(newObj) {
+    if(newObj) {
+      if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+        return;
+      update(obj = newObj); // this case is not properly handled and would only be reached
+                            // if re-including a style while specifying a different sourceMap or media option
+    }
+  };
+}
+
+styleStack.prototype.getStyleTag = function getStyleTag() {
+  return '<style class="server-style-loader-element">'+this.stackStyleElement.cssText+'</style>';
+}
+
+function applyToSingletonTag(styleElement, index, obj) {
+  styleElement.cssText = replaceText(index, obj.css);
+}
+
+module.exports.listToStyles = function listToStyles(list) {
+  var styles = [];
+  var newStyles = {};
+  for(var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var id = item[0];
+    var css = item[1];
+    var media = item[2];
+    var sourceMap = item[3];
+    var part = {css: css, media: media, sourceMap: sourceMap};
+    if(!newStyles[id])
+      styles.push(newStyles[id] = {id: id, parts: [part]});
+    else
+      newStyles[id].parts.push(part);
+  }
+  return styles;
+}
+
+
+var replaceText = (function () {
+  var textStore = [];
+
+  return function (index, replacement) {
+    textStore[index] = replacement;
+    return textStore.filter(Boolean).join('\n');
+  };
+})();
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -501,7 +748,7 @@ function Hero() {
 exports.default = Hero;
 
 /***/ }),
-/* 17 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -542,7 +789,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 18 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -583,7 +830,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 19 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
