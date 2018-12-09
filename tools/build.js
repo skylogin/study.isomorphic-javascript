@@ -18,19 +18,19 @@ async function copy() {
 }
 
 function bundle({ watch }) {
-  //웹팩으로 소스코드 번들링
   return new Promise((resolve, reject) => {
-    let runCount = 0;
+    let bundlerRunCount = 0;
     const bundler = webpack(webpackConfig);
     const cb = (err, stats) => {
       if (err) {
-        return reject(err);
+        reject(err);
+        return;
       }
 
       console.log(stats.toString(webpackConfig[0].stats));
 
-      if (++runCount === (watch ? webpackConfig.length : 1)) {
-        return resolve();
+      if (++bundlerRunCount === (watch ? webpackConfig.length : 1)) {
+        resolve();
       }
     };
 

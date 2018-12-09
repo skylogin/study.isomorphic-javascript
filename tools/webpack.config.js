@@ -56,7 +56,8 @@ const common = {
         ]
       }
     ]
-  }
+  },
+  plugins: []
 };
 
 const client = extend(true, {}, common, {
