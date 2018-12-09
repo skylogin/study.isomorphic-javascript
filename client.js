@@ -1,10 +1,19 @@
 import "babel-core/register";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App";
+import Router from "./core/Router";
 
 function run() {
-  ReactDOM.hydrate(<App />, document.getElementById("app"));
+  const state = window.AppState;
+  const container = document.getElementById("app");
+  const location = { path: window.location.pathname };
+  const [component, page] = Router.match(location, state);
+  ReactDOM.render(component, container, () => {
+    document.title = page.title;
+    document
+      .querySelector("meta[name=description]")
+      .setAttribute("content", page.description);
+  });
 }
 
 const loadedStates = ["complete", "loaded", "interactive"];
