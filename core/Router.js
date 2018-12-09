@@ -11,19 +11,31 @@ const routes = [
 const router = {
   match(location, state) {
     let component;
+    const page = {
+      title: "My Application",
+      description: "Isomorphic web application sample",
+      status: 200
+    };
     const route = routes.find(x => x.path === location.path);
 
     if (route) {
       try {
-        component = route.action(location);
+        component = route.action(location, state);
       } catch (err) {
         component = routes.find(x => x.path === "/500").action();
+        page.status = 500;
       }
     } else {
       component = routes.find(x => x.path === "/404").action();
+      page.status = 404;
     }
 
-    return <Context {...state}>{component}</Context>;
+    return [
+      <Context {...state} page={page}>
+        {component}
+      </Context>,
+      page
+    ];
   }
 };
 

@@ -113,13 +113,17 @@ module.exports = require("babel-runtime/helpers/inherits");
 "use strict";
 
 
-__webpack_require__(8);
+var _slicedToArray2 = __webpack_require__(8);
 
-var _path = __webpack_require__(9);
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
+__webpack_require__(9);
+
+var _path = __webpack_require__(10);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _express = __webpack_require__(10);
+var _express = __webpack_require__(11);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -127,15 +131,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(11);
+var _server = __webpack_require__(12);
 
 var _server2 = _interopRequireDefault(_server);
 
-var _Router = __webpack_require__(12);
+var _Router = __webpack_require__(13);
 
 var _Router2 = _interopRequireDefault(_Router);
 
-var _Html = __webpack_require__(25);
+var _Html = __webpack_require__(27);
 
 var _Html2 = _interopRequireDefault(_Html);
 
@@ -158,11 +162,16 @@ server.use(function (req, res, next) {
 
 server.get("*", function (req, res) {
   var state = { user: req.user };
-  var component = _Router2.default.match(req);
+
+  var _Router$match = _Router2.default.match(req, state),
+      _Router$match2 = (0, _slicedToArray3.default)(_Router$match, 2),
+      component = _Router$match2[0],
+      page = _Router$match2[1];
+
   var body = _server2.default.renderToString(component);
   var html = _server2.default.renderToStaticMarkup(_react2.default.createElement(_Html2.default, {
-    title: "My App",
-    description: "Isomorphic web application sample",
+    title: page.title,
+    description: page.description,
     body: body,
     state: state
   }));
@@ -177,28 +186,34 @@ server.listen(port, function () {
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-core/register");
+module.exports = require("babel-runtime/helpers/slicedToArray");
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("babel-core/register");
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = require("express");
+module.exports = require("path");
 
 /***/ }),
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-dom/server");
+module.exports = require("express");
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom/server");
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -208,52 +223,69 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends2 = __webpack_require__(14);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Context = __webpack_require__(13);
+var _Context = __webpack_require__(15);
 
 var _Context2 = _interopRequireDefault(_Context);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //경로를 이곳에 등록
-var routes = [__webpack_require__(14).default, __webpack_require__(23).default, __webpack_require__(24).default];
+var routes = [__webpack_require__(16).default, __webpack_require__(25).default, __webpack_require__(26).default];
 
 var router = {
   match: function match(location, state) {
     var component = void 0;
+    var page = {
+      title: "My Application",
+      description: "Isomorphic web application sample",
+      status: 200
+    };
     var route = routes.find(function (x) {
       return x.path === location.path;
     });
 
     if (route) {
       try {
-        component = route.action(location);
+        component = route.action(location, state);
       } catch (err) {
         component = routes.find(function (x) {
           return x.path === "/500";
         }).action();
+        page.status = 500;
       }
     } else {
       component = routes.find(function (x) {
         return x.path === "/404";
       }).action();
+      page.status = 404;
     }
 
-    return _react2.default.createElement(
+    return [_react2.default.createElement(
       _Context2.default,
-      state,
+      (0, _extends3.default)({}, state, { page: page }),
       component
-    );
+    ), page];
   }
 };
 
 exports.default = router;
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/extends");
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -305,6 +337,7 @@ var Context = function (_Component) {
     key: "getChildContext",
     value: function getChildContext() {
       return {
+        page: this.props.page,
         user: this.props.user
       };
     }
@@ -318,6 +351,11 @@ var Context = function (_Component) {
 }(_react.Component);
 
 Context.childContextTypes = {
+  page: _propTypes2.default.shape({
+    title: _propTypes2.default.string,
+    description: _propTypes2.default.string,
+    status: _propTypes2.default.number
+  }),
   user: _propTypes2.default.shape({
     name: _propTypes2.default.string.isRequired
   })
@@ -325,7 +363,7 @@ Context.childContextTypes = {
 exports.default = Context;
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -359,11 +397,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Layout = __webpack_require__(15);
+var _Layout = __webpack_require__(17);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _Hero = __webpack_require__(22);
+var _Hero = __webpack_require__(24);
 
 var _Hero2 = _interopRequireDefault(_Hero);
 
@@ -435,7 +473,7 @@ var Home = function (_Component) {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -449,7 +487,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Header = __webpack_require__(16);
+var _Header = __webpack_require__(18);
 
 var _Header2 = _interopRequireDefault(_Header);
 
@@ -457,7 +495,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Layout = __webpack_require__(17);
+var _Layout = __webpack_require__(19);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
@@ -500,7 +538,7 @@ Layout.propTypes = {
 exports.default = Layout;
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -561,24 +599,24 @@ Header.propTypes = {
 exports.default = Header;
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-collector: Loads CSS like style-loader, but pass the content to the style collector instead of inserting in the DOM
 
 // load the styles
-var content = __webpack_require__(18);
+var content = __webpack_require__(20);
 if (typeof content === 'string') content = [[module.i, content, '']];
 // collect the styles
-__webpack_require__(20).add(content, {});
+__webpack_require__(22).add(content, {});
 if (content.locals) module.exports = content.locals;
 delete __webpack_require__.c[module.i];
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(undefined);
+exports = module.exports = __webpack_require__(21)(undefined);
 // imports
 
 
@@ -591,7 +629,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /*
@@ -673,10 +711,10 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var styleStack = __webpack_require__(21);
+var styleStack = __webpack_require__(23);
 // it's necessary setting initialStyleStack as it may not be required as the same module between webpack and the user
 // due to path differences in certain scenarios
 global.initialStyleStack = (global.initialStyleStack !== undefined) ? global.initialStyleStack : new styleStack();
@@ -716,7 +754,7 @@ function inactiveAdd() {}
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports) {
 
 var styleStack = module.exports = function styleStack() {
@@ -803,7 +841,7 @@ var replaceText = (function () {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -849,7 +887,7 @@ function Hero() {
 exports.default = Hero;
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -890,7 +928,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -931,7 +969,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -941,7 +979,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(26);
+var _stringify = __webpack_require__(28);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -1001,7 +1039,7 @@ Html.propType = {
 exports.default = Html;
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");

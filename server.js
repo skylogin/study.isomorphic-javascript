@@ -23,12 +23,12 @@ server.use((req, res, next) => {
 
 server.get("*", (req, res) => {
   const state = { user: req.user };
-  const component = Router.match(req);
+  const [component, page] = Router.match(req, state);
   const body = ReactDOM.renderToString(component);
   const html = ReactDOM.renderToStaticMarkup(
     <Html
-      title="My App"
-      description="Isomorphic web application sample"
+      title={page.title}
+      description={page.description}
       body={body}
       state={state}
     />

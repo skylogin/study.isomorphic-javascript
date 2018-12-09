@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 
 class Context extends Component {
   static childContextTypes = {
+    page: PropTypes.shape({
+      title: PropTypes.string,
+      description: PropTypes.string,
+      status: PropTypes.number
+    }),
     user: PropTypes.shape({
       name: PropTypes.string.isRequired
     })
@@ -10,6 +15,7 @@ class Context extends Component {
 
   getChildContext() {
     return {
+      page: this.props.page,
       user: this.props.user
     };
   }

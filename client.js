@@ -4,9 +4,16 @@ import ReactDOM from "react-dom";
 import Router from "./core/Router";
 
 function run() {
+  const state = window.AppState;
+  const container = document.getElementById("app");
   const location = { path: window.location.pathname };
-  const component = Router.match(location, window.AppState);
-  ReactDOM.hydrate(component, document.getElementById("app"));
+  const [component, page] = Router.match(location, state);
+  ReactDOM.render(component, container, () => {
+    document.title = page.title;
+    document
+      .querySelector("meta[name=description]")
+      .setAttribute("content", page.description);
+  });
 }
 
 const loadedStates = ["complete", "loaded", "interactive"];
