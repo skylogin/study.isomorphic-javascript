@@ -105,7 +105,7 @@ var _Router = __webpack_require__(7);
 
 var _Router2 = _interopRequireDefault(_Router);
 
-var _Html = __webpack_require__(17);
+var _Html = __webpack_require__(19);
 
 var _Html2 = _interopRequireDefault(_Html);
 
@@ -166,7 +166,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 //경로를 이곳에 등록
-var routes = [__webpack_require__(8).default, __webpack_require__(18).default, __webpack_require__(19).default];
+var routes = [__webpack_require__(8).default, __webpack_require__(17).default, __webpack_require__(18).default];
 
 var router = {
   match: function match(location) {
@@ -517,51 +517,6 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Html = function Html(props) {
-  return _react2.default.createElement(
-    "html",
-    null,
-    _react2.default.createElement(
-      "head",
-      null,
-      _react2.default.createElement("meta", { charSet: "utf-8" }),
-      _react2.default.createElement("meta", { httpEquiv: "x-ua-compatible", content: "ie=edge" }),
-      _react2.default.createElement(
-        "title",
-        null,
-        props.title || ""
-      ),
-      _react2.default.createElement("meta", { name: "description", content: props.description || "" }),
-      _react2.default.createElement("meta", { name: "viewport", content: "width=device-width, initial-scale=1" }),
-      _react2.default.createElement("script", { src: "client.js" })
-    ),
-    _react2.default.createElement(
-      "body",
-      null,
-      _react2.default.createElement("div", { id: "app", dangerouslySetInnerHTML: { __html: props.children } })
-    )
-  );
-};
-
-exports.default = Html;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var path = "/404";
 var action = function action() {
   return _react2.default.createElement(NotFound, null);
@@ -587,7 +542,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -626,6 +581,51 @@ function NotFound() {
 }
 
 exports.default = { path: path, action: action };
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Html = function Html(props) {
+  return _react2.default.createElement(
+    "html",
+    null,
+    _react2.default.createElement(
+      "head",
+      null,
+      _react2.default.createElement("meta", { charSet: "utf-8" }),
+      _react2.default.createElement("meta", { httpEquiv: "x-ua-compatible", content: "ie=edge" }),
+      _react2.default.createElement(
+        "title",
+        null,
+        props.title || ""
+      ),
+      _react2.default.createElement("meta", { name: "description", content: props.description || "" }),
+      _react2.default.createElement("meta", { name: "viewport", content: "width=device-width, initial-scale=1" }),
+      _react2.default.createElement("script", { src: "client.js" })
+    ),
+    _react2.default.createElement(
+      "body",
+      null,
+      _react2.default.createElement("div", { id: "app", dangerouslySetInnerHTML: { __html: props.children } })
+    )
+  );
+};
+
+exports.default = Html;
 
 /***/ })
 /******/ ]);
