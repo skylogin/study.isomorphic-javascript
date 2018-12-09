@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,16 +72,24 @@ module.exports = require("react");
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("prop-types");
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _path = __webpack_require__(2);
+__webpack_require__(3);
+
+var _path = __webpack_require__(4);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _express = __webpack_require__(3);
+var _express = __webpack_require__(5);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -89,17 +97,17 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(4);
+var _server = __webpack_require__(6);
 
 var _server2 = _interopRequireDefault(_server);
 
-var _Html = __webpack_require__(5);
+var _Router = __webpack_require__(7);
+
+var _Router2 = _interopRequireDefault(_Router);
+
+var _Html = __webpack_require__(17);
 
 var _Html2 = _interopRequireDefault(_Html);
-
-var _App = __webpack_require__(6);
-
-var _App2 = _interopRequireDefault(_App);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -109,7 +117,8 @@ var port = process.env.PORT || 3000;
 server.use(_express2.default.static(_path2.default.join(__dirname, "public")));
 
 server.get("*", function (req, res) {
-  var body = _server2.default.renderToString(_react2.default.createElement(_App2.default, null));
+  var component = _Router2.default.match(req);
+  var body = _server2.default.renderToString(component);
   var html = _server2.default.renderToStaticMarkup(_react2.default.createElement(_Html2.default, {
     title: "My App",
     description: "Isomorphic web application sample",
@@ -119,29 +128,380 @@ server.get("*", function (req, res) {
 });
 
 server.listen(port, function () {
-  console.log("App is listening at http://localhost:" + port);
+  console.log("Node.js is listening at http://localhost:" + port);
 });
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("express");
+module.exports = require("babel-core/register");
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-dom/server");
+module.exports = require("path");
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("express");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom/server");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+//경로를 이곳에 등록
+var routes = [__webpack_require__(8).default, __webpack_require__(18).default, __webpack_require__(19).default];
+
+var router = {
+  match: function match(location) {
+    var route = routes.find(function (x) {
+      return x.path === location.path;
+    });
+
+    if (route) {
+      try {
+        return route.action();
+      } catch (err) {
+        return routes.find(function (x) {
+          return x.path === "/500";
+        }).action();
+      }
+    } else {
+      return routes.find(function (x) {
+        return x.path === "/404";
+      }).action();
+    }
+  }
+};
+
+exports.default = router;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _getPrototypeOf = __webpack_require__(9);
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(10);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(11);
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(12);
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(13);
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Layout = __webpack_require__(14);
+
+var _Layout2 = _interopRequireDefault(_Layout);
+
+var _Hero = __webpack_require__(16);
+
+var _Hero2 = _interopRequireDefault(_Hero);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var path = "/";
+var action = function action() {
+  return _react2.default.createElement(
+    _Layout2.default,
+    { hero: _react2.default.createElement(_Hero2.default, null) },
+    _react2.default.createElement(Home, null)
+  );
+};
+
+var Home = function (_Component) {
+  (0, _inherits3.default)(Home, _Component);
+
+  function Home() {
+    (0, _classCallCheck3.default)(this, Home);
+    return (0, _possibleConstructorReturn3.default)(this, (Home.__proto__ || (0, _getPrototypeOf2.default)(Home)).apply(this, arguments));
+  }
+
+  (0, _createClass3.default)(Home, [{
+    key: "handleClick",
+    value: function handleClick(event) {
+      event.preventDefault();
+      window.location = event.currentTarget.pathname;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "div",
+        null,
+        _react2.default.createElement(
+          "h2",
+          null,
+          "Popular things to rent"
+        ),
+        _react2.default.createElement(
+          "div",
+          null,
+          _react2.default.createElement(
+            "a",
+            { href: "/s/Tools", onClick: this.handleClick },
+            _react2.default.createElement(
+              "span",
+              null,
+              "Tools"
+            )
+          ),
+          _react2.default.createElement(
+            "a",
+            { href: "/s/Books", onClick: this.handleClick },
+            _react2.default.createElement(
+              "span",
+              null,
+              "Books"
+            )
+          ),
+          "..."
+        )
+      );
+    }
+  }]);
+  return Home;
+}(_react.Component);
+
+exports.default = { path: path, action: action };
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/object/get-prototype-of");
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/classCallCheck");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/createClass");
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/inherits");
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Header = __webpack_require__(15);
+
+var _Header2 = _interopRequireDefault(_Header);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Layout(_ref) {
+  var hero = _ref.hero,
+      children = _ref.children;
+
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(
+      _Header2.default,
+      null,
+      hero
+    ),
+    _react2.default.createElement(
+      "main",
+      null,
+      children
+    ),
+    _react2.default.createElement(
+      "footer",
+      null,
+      _react2.default.createElement(
+        "span",
+        null,
+        "Company Name"
+      )
+    )
+  );
+}
+
+Layout.propTypes = {
+  hero: _propTypes2.default.element,
+  children: _propTypes2.default.element.isRequired
+};
+
+exports.default = Layout;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Header(_ref) {
+  var children = _ref.children;
+
+  return _react2.default.createElement(
+    "header",
+    null,
+    _react2.default.createElement(
+      "div",
+      null,
+      _react2.default.createElement(
+        "span",
+        null,
+        "My App"
+      ),
+      !children && _react2.default.createElement(
+        "form",
+        null,
+        _react2.default.createElement("input", { type: "search" })
+      ),
+      _react2.default.createElement(
+        "div",
+        null,
+        _react2.default.createElement(
+          "span",
+          null,
+          "Username"
+        ),
+        _react2.default.createElement("img", { src: "#" })
+      )
+    ),
+    children
+  );
+}
+
+Header.propTypes = {
+  children: _propTypes2.default.element
+};
+
+exports.default = Header;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Hero() {
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(
+      "h2",
+      null,
+      "Rent Anything You Want"
+    ),
+    _react2.default.createElement(
+      "p",
+      null,
+      "From people around you"
+    ),
+    _react2.default.createElement(
+      "form",
+      null,
+      _react2.default.createElement("input", { type: "search", placeholder: "I want to rent..." }),
+      _react2.default.createElement(
+        "button",
+        null,
+        "Search"
+      )
+    )
+  );
+}
+
+exports.default = Hero;
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -186,7 +546,7 @@ var Html = function Html(props) {
 exports.default = Html;
 
 /***/ }),
-/* 6 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -196,126 +556,76 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(7);
+var _react = __webpack_require__(0);
 
-var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+var _react2 = _interopRequireDefault(_react);
 
-var _classCallCheck2 = __webpack_require__(8);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+var path = "/404";
+var action = function action() {
+  return _react2.default.createElement(NotFound, null);
+};
 
-var _createClass2 = __webpack_require__(9);
+function NotFound() {
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(
+      "h1",
+      null,
+      "Page Not Found"
+    ),
+    _react2.default.createElement(
+      "p",
+      null,
+      "Sorry, but the page you were trying to view does not exist."
+    )
+  );
+}
 
-var _createClass3 = _interopRequireDefault(_createClass2);
+exports.default = { path: path, action: action };
 
-var _possibleConstructorReturn2 = __webpack_require__(10);
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+"use strict";
 
-var _inherits2 = __webpack_require__(11);
 
-var _inherits3 = _interopRequireDefault(_inherits2);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _moment = __webpack_require__(12);
-
-var _moment2 = _interopRequireDefault(_moment);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var App = function (_Component) {
-  (0, _inherits3.default)(App, _Component);
+var path = "/500";
+var action = function action() {
+  return _react2.default.createElement(InternalError, null);
+};
 
-  function App(props) {
-    (0, _classCallCheck3.default)(this, App);
+function NotFound() {
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(
+      "h1",
+      null,
+      "Server Internal Error"
+    ),
+    _react2.default.createElement(
+      "p",
+      null,
+      "Sorry, We can fix it."
+    )
+  );
+}
 
-    var _this = (0, _possibleConstructorReturn3.default)(this, (App.__proto__ || (0, _getPrototypeOf2.default)(App)).call(this, props));
-
-    _this.state = { time: null };
-    return _this;
-  }
-
-  (0, _createClass3.default)(App, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this.tick();
-      this.interval = setInterval(this.tick.bind(this), 200);
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      clearInterval(this.interval);
-    }
-  }, {
-    key: "tick",
-    value: function tick() {
-      this.setState({ time: new Date() });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var time = this.state.time;
-      var timeString = time && (0, _moment2.default)(time).format("h:mm:ss a");
-      return _react2.default.createElement(
-        "div",
-        null,
-        _react2.default.createElement(
-          "h1",
-          null,
-          "Sample Application"
-        ),
-        _react2.default.createElement(
-          "p",
-          null,
-          "Current time is ",
-          timeString
-        )
-      );
-    }
-  }]);
-  return App;
-}(_react.Component);
-
-exports.default = App;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/core-js/object/get-prototype-of");
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/classCallCheck");
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/createClass");
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/inherits");
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = require("moment");
+exports.default = { path: path, action: action };
 
 /***/ })
 /******/ ]);
