@@ -4,7 +4,7 @@ import UserType from "../types/UserType";
 const viewer = {
   type: UserType,
   resolve({ user }) {
-    return User.findById(user && user.id);
+    return User.load(user && user.id);
   }
 };
 

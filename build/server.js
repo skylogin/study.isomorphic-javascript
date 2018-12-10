@@ -122,6 +122,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _from = __webpack_require__(16);
+
+var _from2 = _interopRequireDefault(_from);
+
+var _promise = __webpack_require__(17);
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _set = __webpack_require__(18);
+
+var _set2 = _interopRequireDefault(_set);
+
 var _sequelize = __webpack_require__(3);
 
 var _sequelize2 = _interopRequireDefault(_sequelize);
@@ -132,6 +144,8 @@ var _sequelize4 = _interopRequireDefault(_sequelize3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var batch = { keys: new _set2.default(), task: null };
+
 var User = _sequelize4.default.define("User", {
   id: {
     type: _sequelize2.default.INTEGER,
@@ -141,6 +155,32 @@ var User = _sequelize4.default.define("User", {
   email: { type: _sequelize2.default.TEXT, validate: { isEmail: true } },
   password: { type: _sequelize2.default.TEXT },
   displayName: { type: _sequelize2.default.TEXT }
+}, {
+  classMethods: {
+    load: function load(id) {
+      var _this = this;
+
+      if (!batch.keys.size) {
+        batch.task = new _promise2.default(function (resolve, reject) {
+          process.nextTick(function () {
+            _this.constructor.prototype.findAll.call(_this, {
+              where: { id: (0, _from2.default)(batch.keys) }
+            }).then(function (data) {
+              batch.keys.clear();
+              resolve(data);
+            }, reject);
+          });
+        });
+      }
+
+      batch.keys.add(id);
+      return batch.task.then(function (data) {
+        return data.find(function (x) {
+          return x.id === id;
+        });
+      });
+    }
+  }
 });
 
 exports.default = User;
@@ -194,17 +234,17 @@ var _schema = __webpack_require__(14);
 
 var _schema2 = _interopRequireDefault(_schema);
 
-var _models = __webpack_require__(18);
+var _models = __webpack_require__(21);
 
 var _models2 = _interopRequireDefault(_models);
 
-__webpack_require__(23);
+__webpack_require__(26);
 
-var _path = __webpack_require__(24);
+var _path = __webpack_require__(27);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _express = __webpack_require__(25);
+var _express = __webpack_require__(28);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -212,15 +252,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(26);
+var _server = __webpack_require__(29);
 
 var _server2 = _interopRequireDefault(_server);
 
-var _Router = __webpack_require__(27);
+var _Router = __webpack_require__(30);
 
 var _Router2 = _interopRequireDefault(_Router);
 
-var _Html = __webpack_require__(41);
+var _Html = __webpack_require__(44);
 
 var _Html2 = _interopRequireDefault(_Html);
 
@@ -303,7 +343,7 @@ var _viewer = __webpack_require__(15);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
-var _greeting = __webpack_require__(17);
+var _greeting = __webpack_require__(20);
 
 var _greeting2 = _interopRequireDefault(_greeting);
 
@@ -336,7 +376,7 @@ var _User = __webpack_require__(5);
 
 var _User2 = _interopRequireDefault(_User);
 
-var _UserType = __webpack_require__(16);
+var _UserType = __webpack_require__(19);
 
 var _UserType2 = _interopRequireDefault(_UserType);
 
@@ -347,7 +387,7 @@ var viewer = {
   resolve: function resolve(_ref) {
     var user = _ref.user;
 
-    return _User2.default.findById(user && user.id);
+    return _User2.default.load(user && user.id);
   }
 };
 
@@ -355,6 +395,24 @@ exports.default = viewer;
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/array/from");
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/promise");
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/set");
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -378,7 +436,7 @@ var UserType = new _graphql.GraphQLObjectType({
 exports.default = UserType;
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -405,7 +463,7 @@ var greeting = {
 exports.default = greeting;
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -416,11 +474,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Offer = exports.User = exports.default = undefined;
 
-var _regenerator = __webpack_require__(19);
+var _regenerator = __webpack_require__(22);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(20);
+var _asyncToGenerator2 = __webpack_require__(23);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -475,7 +533,7 @@ var sync = function () {
   };
 }();
 
-var _faker = __webpack_require__(21);
+var _faker = __webpack_require__(24);
 
 var _faker2 = _interopRequireDefault(_faker);
 
@@ -487,7 +545,7 @@ var _User = __webpack_require__(5);
 
 var _User2 = _interopRequireDefault(_User);
 
-var _Offer = __webpack_require__(22);
+var _Offer = __webpack_require__(25);
 
 var _Offer2 = _interopRequireDefault(_Offer);
 
@@ -501,25 +559,25 @@ exports.User = _User2.default;
 exports.Offer = _Offer2.default;
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/regenerator");
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/asyncToGenerator");
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = require("faker");
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -555,31 +613,31 @@ var Offer = _sequelize4.default.define("Offer", {
 exports.default = Offer;
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-core/register");
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -589,7 +647,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends2 = __webpack_require__(28);
+var _extends2 = __webpack_require__(31);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -597,14 +655,14 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Context = __webpack_require__(29);
+var _Context = __webpack_require__(32);
 
 var _Context2 = _interopRequireDefault(_Context);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //경로를 이곳에 등록
-var routes = [__webpack_require__(30).default, __webpack_require__(39).default, __webpack_require__(40).default];
+var routes = [__webpack_require__(33).default, __webpack_require__(42).default, __webpack_require__(43).default];
 
 var router = {
   match: function match(location, state) {
@@ -645,13 +703,13 @@ var router = {
 exports.default = router;
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/extends");
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,7 +787,7 @@ Context.childContextTypes = {
 exports.default = Context;
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -763,11 +821,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Layout = __webpack_require__(31);
+var _Layout = __webpack_require__(34);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _Hero = __webpack_require__(38);
+var _Hero = __webpack_require__(41);
 
 var _Hero2 = _interopRequireDefault(_Hero);
 
@@ -839,7 +897,7 @@ var Home = function (_Component) {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -853,7 +911,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Header = __webpack_require__(32);
+var _Header = __webpack_require__(35);
 
 var _Header2 = _interopRequireDefault(_Header);
 
@@ -861,7 +919,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Layout = __webpack_require__(33);
+var _Layout = __webpack_require__(36);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
@@ -904,7 +962,7 @@ Layout.propTypes = {
 exports.default = Layout;
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -965,24 +1023,24 @@ Header.propTypes = {
 exports.default = Header;
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-collector: Loads CSS like style-loader, but pass the content to the style collector instead of inserting in the DOM
 
 // load the styles
-var content = __webpack_require__(34);
+var content = __webpack_require__(37);
 if (typeof content === 'string') content = [[module.i, content, '']];
 // collect the styles
-__webpack_require__(36).add(content, {});
+__webpack_require__(39).add(content, {});
 if (content.locals) module.exports = content.locals;
 delete __webpack_require__.c[module.i];
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(35)(undefined);
+exports = module.exports = __webpack_require__(38)(undefined);
 // imports
 
 
@@ -995,7 +1053,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports) {
 
 /*
@@ -1077,10 +1135,10 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var styleStack = __webpack_require__(37);
+var styleStack = __webpack_require__(40);
 // it's necessary setting initialStyleStack as it may not be required as the same module between webpack and the user
 // due to path differences in certain scenarios
 global.initialStyleStack = (global.initialStyleStack !== undefined) ? global.initialStyleStack : new styleStack();
@@ -1120,7 +1178,7 @@ function inactiveAdd() {}
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports) {
 
 var styleStack = module.exports = function styleStack() {
@@ -1207,7 +1265,7 @@ var replaceText = (function () {
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1253,7 +1311,7 @@ function Hero() {
 exports.default = Hero;
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1294,7 +1352,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1335,7 +1393,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1345,7 +1403,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(42);
+var _stringify = __webpack_require__(45);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -1405,7 +1463,7 @@ Html.propType = {
 exports.default = Html;
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");
