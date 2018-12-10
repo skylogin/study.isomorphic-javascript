@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -80,50 +80,131 @@ module.exports = require("prop-types");
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-runtime/core-js/object/get-prototype-of");
+module.exports = require("graphql");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-runtime/helpers/classCallCheck");
+module.exports = require("sequelize");
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/createClass");
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/inherits");
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _slicedToArray2 = __webpack_require__(8);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _sequelize = __webpack_require__(3);
+
+var _sequelize2 = _interopRequireDefault(_sequelize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var sequelize = new _sequelize2.default("sqlite:database.sqlite", {
+  define: { freezeTableName: true }
+});
+
+exports.default = sequelize;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _sequelize = __webpack_require__(3);
+
+var _sequelize2 = _interopRequireDefault(_sequelize);
+
+var _sequelize3 = __webpack_require__(4);
+
+var _sequelize4 = _interopRequireDefault(_sequelize3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var User = _sequelize4.default.define("User", {
+  id: {
+    type: _sequelize2.default.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  email: { type: _sequelize2.default.TEXT, validate: { isEmail: true } },
+  password: { type: _sequelize2.default.TEXT },
+  displayName: { type: _sequelize2.default.TEXT }
+});
+
+exports.default = User;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/object/get-prototype-of");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/classCallCheck");
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/createClass");
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/possibleConstructorReturn");
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/inherits");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray2 = __webpack_require__(12);
 
 var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
-__webpack_require__(9);
+var _expressGraphql = __webpack_require__(13);
 
-var _path = __webpack_require__(10);
+var _expressGraphql2 = _interopRequireDefault(_expressGraphql);
+
+var _schema = __webpack_require__(14);
+
+var _schema2 = _interopRequireDefault(_schema);
+
+var _models = __webpack_require__(18);
+
+var _models2 = _interopRequireDefault(_models);
+
+__webpack_require__(23);
+
+var _path = __webpack_require__(24);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _express = __webpack_require__(11);
+var _express = __webpack_require__(25);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -131,15 +212,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(12);
+var _server = __webpack_require__(26);
 
 var _server2 = _interopRequireDefault(_server);
 
-var _Router = __webpack_require__(13);
+var _Router = __webpack_require__(27);
 
 var _Router2 = _interopRequireDefault(_Router);
 
-var _Html = __webpack_require__(27);
+var _Html = __webpack_require__(41);
 
 var _Html2 = _interopRequireDefault(_Html);
 
@@ -160,6 +241,21 @@ server.use(function (req, res, next) {
   next();
 });
 
+server.use("/graphql", (0, _expressGraphql2.default)({
+  schema: _schema2.default,
+  rootValue: { user: 1 },
+  graphql: true,
+  pretty: process.env.NODE_ENV !== "produection"
+}));
+
+_models2.default.sync({ force: process.env.NODE_ENV !== "production" }).catch(function (err) {
+  return console.error(err.stack);
+}).then(function () {
+  server.listen(port, function () {
+    return console.log("Node.js server is listening at http://localhost:" + port + "/");
+  });
+});
+
 server.get("*", function (req, res) {
   var state = { user: req.user };
 
@@ -178,42 +274,20 @@ server.get("*", function (req, res) {
   res.send("<!doctype html>\n" + html);
 });
 
-server.listen(port, function () {
-  console.log("Node.js is listening at http://localhost:" + port);
-});
-
 /***/ }),
-/* 8 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/slicedToArray");
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-core/register");
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("express");
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-dom/server");
-
-/***/ }),
 /* 13 */
+/***/ (function(module, exports) {
+
+module.exports = require("express-graphql");
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -223,7 +297,299 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends2 = __webpack_require__(14);
+var _graphql = __webpack_require__(2);
+
+var _viewer = __webpack_require__(15);
+
+var _viewer2 = _interopRequireDefault(_viewer);
+
+var _greeting = __webpack_require__(17);
+
+var _greeting2 = _interopRequireDefault(_greeting);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var schema = new _graphql.GraphQLSchema({
+  query: new _graphql.GraphQLObjectType({
+    name: "Query",
+    fields: {
+      viewer: _viewer2.default,
+      greeting: _greeting2.default
+    }
+  })
+});
+
+exports.default = schema;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _User = __webpack_require__(5);
+
+var _User2 = _interopRequireDefault(_User);
+
+var _UserType = __webpack_require__(16);
+
+var _UserType2 = _interopRequireDefault(_UserType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var viewer = {
+  type: _UserType2.default,
+  resolve: function resolve(_ref) {
+    var user = _ref.user;
+
+    return _User2.default.findById(user && user.id);
+  }
+};
+
+exports.default = viewer;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _graphql = __webpack_require__(2);
+
+var UserType = new _graphql.GraphQLObjectType({
+  name: "User",
+  fields: {
+    id: { type: new _graphql.GraphQLNonNull(_graphql.GraphQLID) },
+    email: { type: _graphql.GraphQLString },
+    displayName: { type: _graphql.GraphQLString }
+  }
+});
+
+exports.default = UserType;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _graphql = __webpack_require__(2);
+
+var greeting = {
+  type: _graphql.GraphQLString,
+  args: {
+    name: { type: _graphql.GraphQLString }
+  },
+  resolve: function resolve(_, _ref) {
+    var name = _ref.name;
+
+    return "Welcome, " + (name || "Guest") + "!";
+  }
+};
+
+exports.default = greeting;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Offer = exports.User = exports.default = undefined;
+
+var _regenerator = __webpack_require__(19);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(20);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var sync = function () {
+  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(options) {
+    var i, firstName, lastName;
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return _sequelize2.default.sync(options);
+
+          case 2:
+            if (!options.force) {
+              _context.next = 12;
+              break;
+            }
+
+            i = 0;
+
+          case 4:
+            if (!(i < 50)) {
+              _context.next = 12;
+              break;
+            }
+
+            firstName = _faker2.default.name.firstName();
+            lastName = _faker2.default.name.lastName();
+            _context.next = 9;
+            return _User2.default.create({
+              email: _faker2.default.internet.email(firstName, lastName),
+              password: _faker2.default.internet.password(),
+              displayName: _faker2.default.name.findName(firstName, lastName)
+            });
+
+          case 9:
+            i++;
+            _context.next = 4;
+            break;
+
+          case 12:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function sync(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _faker = __webpack_require__(21);
+
+var _faker2 = _interopRequireDefault(_faker);
+
+var _sequelize = __webpack_require__(4);
+
+var _sequelize2 = _interopRequireDefault(_sequelize);
+
+var _User = __webpack_require__(5);
+
+var _User2 = _interopRequireDefault(_User);
+
+var _Offer = __webpack_require__(22);
+
+var _Offer2 = _interopRequireDefault(_Offer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_Offer2.default.belongsTo(_User2.default, { as: "author" });
+_User2.default.hasMany(_Offer2.default, { as: "offers", foreignKey: "authorId" });
+
+exports.default = sync;
+exports.User = _User2.default;
+exports.Offer = _Offer2.default;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/regenerator");
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/asyncToGenerator");
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = require("faker");
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _sequelize = __webpack_require__(3);
+
+var _sequelize2 = _interopRequireDefault(_sequelize);
+
+var _sequelize3 = __webpack_require__(4);
+
+var _sequelize4 = _interopRequireDefault(_sequelize3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Offer = _sequelize4.default.define("Offer", {
+  id: {
+    type: _sequelize2.default.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  slug: { type: _sequelize2.default.TEXT },
+  name: { type: _sequelize2.default.TEXT },
+  priceHourly: { type: _sequelize2.default.REAL },
+  priceDaily: { type: _sequelize2.default.REAL },
+  priceWeekly: { type: _sequelize2.default.REAL }
+});
+
+exports.default = Offer;
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-core/register");
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+module.exports = require("express");
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom/server");
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends2 = __webpack_require__(28);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -231,14 +597,14 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Context = __webpack_require__(15);
+var _Context = __webpack_require__(29);
 
 var _Context2 = _interopRequireDefault(_Context);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //경로를 이곳에 등록
-var routes = [__webpack_require__(16).default, __webpack_require__(25).default, __webpack_require__(26).default];
+var routes = [__webpack_require__(30).default, __webpack_require__(39).default, __webpack_require__(40).default];
 
 var router = {
   match: function match(location, state) {
@@ -279,13 +645,13 @@ var router = {
 exports.default = router;
 
 /***/ }),
-/* 14 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/extends");
 
 /***/ }),
-/* 15 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -295,23 +661,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(2);
+var _getPrototypeOf = __webpack_require__(6);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(7);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(4);
+var _createClass2 = __webpack_require__(8);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(5);
+var _possibleConstructorReturn2 = __webpack_require__(9);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(6);
+var _inherits2 = __webpack_require__(10);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
@@ -363,7 +729,7 @@ Context.childContextTypes = {
 exports.default = Context;
 
 /***/ }),
-/* 16 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -373,23 +739,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(2);
+var _getPrototypeOf = __webpack_require__(6);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(7);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(4);
+var _createClass2 = __webpack_require__(8);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(5);
+var _possibleConstructorReturn2 = __webpack_require__(9);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(6);
+var _inherits2 = __webpack_require__(10);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
@@ -397,11 +763,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Layout = __webpack_require__(17);
+var _Layout = __webpack_require__(31);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _Hero = __webpack_require__(24);
+var _Hero = __webpack_require__(38);
 
 var _Hero2 = _interopRequireDefault(_Hero);
 
@@ -473,7 +839,7 @@ var Home = function (_Component) {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 17 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -487,7 +853,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Header = __webpack_require__(18);
+var _Header = __webpack_require__(32);
 
 var _Header2 = _interopRequireDefault(_Header);
 
@@ -495,7 +861,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Layout = __webpack_require__(19);
+var _Layout = __webpack_require__(33);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
@@ -538,7 +904,7 @@ Layout.propTypes = {
 exports.default = Layout;
 
 /***/ }),
-/* 18 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -599,24 +965,24 @@ Header.propTypes = {
 exports.default = Header;
 
 /***/ }),
-/* 19 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-collector: Loads CSS like style-loader, but pass the content to the style collector instead of inserting in the DOM
 
 // load the styles
-var content = __webpack_require__(20);
+var content = __webpack_require__(34);
 if (typeof content === 'string') content = [[module.i, content, '']];
 // collect the styles
-__webpack_require__(22).add(content, {});
+__webpack_require__(36).add(content, {});
 if (content.locals) module.exports = content.locals;
 delete __webpack_require__.c[module.i];
 
 /***/ }),
-/* 20 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(21)(undefined);
+exports = module.exports = __webpack_require__(35)(undefined);
 // imports
 
 
@@ -629,7 +995,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 21 */
+/* 35 */
 /***/ (function(module, exports) {
 
 /*
@@ -711,10 +1077,10 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 22 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var styleStack = __webpack_require__(23);
+var styleStack = __webpack_require__(37);
 // it's necessary setting initialStyleStack as it may not be required as the same module between webpack and the user
 // due to path differences in certain scenarios
 global.initialStyleStack = (global.initialStyleStack !== undefined) ? global.initialStyleStack : new styleStack();
@@ -754,7 +1120,7 @@ function inactiveAdd() {}
 
 
 /***/ }),
-/* 23 */
+/* 37 */
 /***/ (function(module, exports) {
 
 var styleStack = module.exports = function styleStack() {
@@ -841,7 +1207,7 @@ var replaceText = (function () {
 
 
 /***/ }),
-/* 24 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -887,7 +1253,7 @@ function Hero() {
 exports.default = Hero;
 
 /***/ }),
-/* 25 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -928,7 +1294,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 26 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -969,7 +1335,7 @@ function NotFound() {
 exports.default = { path: path, action: action };
 
 /***/ }),
-/* 27 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -979,7 +1345,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(28);
+var _stringify = __webpack_require__(42);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -1039,7 +1405,7 @@ Html.propType = {
 exports.default = Html;
 
 /***/ }),
-/* 28 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");

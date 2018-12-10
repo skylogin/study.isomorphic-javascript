@@ -1,3 +1,7 @@
+import graphql from "express-graphql";
+import schema from "./data/schema";
+import models from "./data/models";
+
 import "babel-core/register";
 import path from "path";
 import express from "express";
@@ -21,6 +25,25 @@ server.use((req, res, next) => {
   next();
 });
 
+server.use(
+  "/graphql",
+  graphql({
+    schema,
+    rootValue: { user: 1 },
+    graphql: true,
+    pretty: process.env.NODE_ENV !== "produection"
+  })
+);
+
+models
+  .sync({ force: process.env.NODE_ENV !== "production" })
+  .catch(err => console.error(err.stack))
+  .then(() => {
+    server.listen(port, () =>
+      console.log(`Node.js server is listening at http://localhost:${port}/`)
+    );
+  });
+
 server.get("*", (req, res) => {
   const state = { user: req.user };
   const [component, page] = Router.match(req, state);
@@ -34,8 +57,4 @@ server.get("*", (req, res) => {
     />
   );
   res.send("<!doctype html>\n" + html);
-});
-
-server.listen(port, () => {
-  console.log(`Node.js is listening at http://localhost:${port}`);
 });
